@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- displays site properly based on user's device -->
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/favicon-32x32.png"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <title>Frontend Mentor | Product list with cart</title>
+  </head>
+  <body>
+    <main>
+      <h3 id="project-title">Desserts</h3>
+      <section id="products-section"></section>
+
+      <section id="cart-section">
+        <h3>Your Cart (<span id="quantity">0</span>)</h3>
+
+        <section id="order-summary">
+          <div id="empty-cart">
+            <img
+              src="assets/images/illustration-empty-cart.svg"
+              alt="cart is empty illustration"
+            />
+            <p>Your added items will appear here</p>
+          </div>
+          <section id="order-summary-details"></section>
+        </section>
+      </section>
+
+      <section class="modal" id="orderModal">
+        <div id="modal-content">
+          <img
+            src="assets/images/icon-order-confirmed.svg"
+            alt="order-success-checkmark"
+          />
+          <h3>Order Confirmed</h3>
+          <p>We hope you enjoy your food!</p>
+
+          <div id="order-confirmation-details"></div>
+          <section class="modal-total"></section>
+          <button id="start-new-order" onclick="newOrder()">
+            Start New Order
+          </button>
+        </div>
+      </section>
+    </main>
+    <script src="script/data.js"></script>
+    <script src="script/script.js"></script>
+  </body>
+</html>
