@@ -14,10 +14,24 @@ async function getData() {
   
   renderProducts();
   }
-
-  document.addEventListener("DOMContentLoaded", () => {getData()});
   
-  const renderProducts = () => {
+const loadCartFromLocalStorage = () => {
+    const storedCart = localStorage.getItem("cartBasket");
+    if(storedCart) {
+      cartBasket = JSON.parse(storedCart);
+      cartBasket.forEach((item) => { updateButton(item.id);
+        toggleButtonState(item.id);
+        updateCart();
+      }
+      )
+    }
+  }
+
+document.addEventListener("DOMContentLoaded", () => {
+  getData().then(loadCartFromLocalStorage);
+});
+  
+const renderProducts = () => {
   const productSection = document.getElementById("products-section");
   productSection.innerHTML += items
     .map((item) => {
@@ -44,20 +58,25 @@ async function getData() {
     `;
     }).join("");
   }
+  
+const toggleButtonState = (itemId) => {
+  const cartButton = document.getElementById(`button-${itemId}`);
+  cartButton.style.color = "white";
+    cartButton.style.backgroundColor = "hsl(14, 86%, 42%)";
+}
 
 const addToCart = (itemId) => {
-  const cartButton = document.getElementById(`button-${itemId}`);
+  
   const products = items.find((item) => item.id === itemId);
   const cartItem = cartBasket.find((product) => product.id === itemId);
   if (cartItem) {
     cartBasket.quantity++;
   } else {
     cartBasket.push({...products, quantity: 1 });
-    cartButton.style.color = "white";
-    cartButton.style.backgroundColor = "hsl(14, 86%, 42%)";
+    toggleButtonState(itemId);
   }
   
-  localStorage.setItem("cartItem", JSON. stringify(cartBasket));
+  localStorage.setItem("cartBasket", JSON. stringify(cartBasket));
   
   updateButton(itemId);
   updateCart();
@@ -82,6 +101,8 @@ const increase = (itemId) => {
   const items = cartBasket.find((item) => item.id === itemId);
   items.quantity++;
   
+  localStorage.setItem("cartBasket", JSON. stringify(cartBasket));
+  
   updateButton(itemId);
   updateCart(itemId);
 };
@@ -95,6 +116,7 @@ const decrease = (itemId) => {
   } else {
     removeItem(itemId);
   }
+  localStorage.setItem("cartBasket", JSON. stringify(cartBasket));
 };
 
 const updateCart = () => {
@@ -169,6 +191,7 @@ const removeItem = (itemId) => {
     //Reset order-summary section
     updateCart();
   }
+  localStorage.setItem("cartBasket", JSON. stringify(cartBasket));
 };
 
 const showModal = () => {
@@ -241,4 +264,7 @@ const newOrder = () => {
   //Reset modal-details
   const orderDetails = document.getElementById("order-confirmation-details");
   orderDetails.innerHTML = "";
+  
+  //Reset local storage
+  localStorage.clear();
 };
