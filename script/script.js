@@ -1,8 +1,23 @@
 "use strict";
 
-let cartBasket = JSON.parse(localStorage.getItem("cartItem")) || [];
+let cartBasket = [];
+let items = [];
 
-const renderProducts = () => {
+async function getData() {
+  const requestURL = "script/data.json";
+  const request = new Request(requestURL);
+  
+  const response = await fetch(request);
+  const itemsText = await response.text();
+  
+  items = await JSON.parse(itemsText);
+  
+  renderProducts();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {getData()});
+  
+  const renderProducts = () => {
   const productSection = document.getElementById("products-section");
   productSection.innerHTML += items
     .map((item) => {
@@ -11,8 +26,8 @@ const renderProducts = () => {
       <section class="product-container">
         <div class="image-container">
           <picture>
-            <source srcset="${image.desktop}" media="min-width(1000px)">
-            <source srcset="${image.tablet}" media="min-width(700px)">
+            <source srcset="${image.desktop}" media="(min-width: 1000px)">
+            <source srcset="${image.tablet}" media="(min-width: 700px)">
             <img src="${image.mobile}" alt="${name}">
           </picture>
           <button onclick="addToCart(${id})" id="button-${id}">
@@ -27,11 +42,8 @@ const renderProducts = () => {
         </div>
       </section>
     `;
-    })
-    .join("");
-};
-
-renderProducts();
+    }).join("");
+  }
 
 const addToCart = (itemId) => {
   const cartButton = document.getElementById(`button-${itemId}`);
@@ -40,11 +52,13 @@ const addToCart = (itemId) => {
   if (cartItem) {
     cartBasket.quantity++;
   } else {
-    cartBasket.push({ ...products, quantity: 1 });
+    cartBasket.push({...products, quantity: 1 });
     cartButton.style.color = "white";
     cartButton.style.backgroundColor = "hsl(14, 86%, 42%)";
   }
-  localStorage.setItem("cartItem", JSON.stringify(cartBasket));
+  
+  localStorage.setItem("cartItem", JSON. stringify(cartBasket));
+  
   updateButton(itemId);
   updateCart();
 };
@@ -67,9 +81,7 @@ const updateButton = (itemId) => {
 const increase = (itemId) => {
   const items = cartBasket.find((item) => item.id === itemId);
   items.quantity++;
-
-  localStorage.setItem("cartItem", JSON.stringify(cartBasket));
-
+  
   updateButton(itemId);
   updateCart(itemId);
 };
@@ -83,7 +95,6 @@ const decrease = (itemId) => {
   } else {
     removeItem(itemId);
   }
-  localStorage.setItem("cartItem", JSON.stringify(cartBasket));
 };
 
 const updateCart = () => {
@@ -158,7 +169,6 @@ const removeItem = (itemId) => {
     //Reset order-summary section
     updateCart();
   }
-  localStorage.setItem("cartItem", JSON.stringify(cartBasket));
 };
 
 const showModal = () => {
@@ -231,7 +241,4 @@ const newOrder = () => {
   //Reset modal-details
   const orderDetails = document.getElementById("order-confirmation-details");
   orderDetails.innerHTML = "";
-
-  //Reset local storage
-  localStorage.clear();
 };
